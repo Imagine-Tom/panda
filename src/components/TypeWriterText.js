@@ -1,12 +1,8 @@
 import React, { useEffect } from "react";
 import styled from "styled-components";
 import Typewriter from "typewriter-effect";
-import { usePrepareContractWrite,useContractWrite,useWaitForTransaction } from 'wagmi'
-import { useWeb3Modal } from "@web3modal/react";
-import { arbitrum, mainnet, polygon } from 'wagmi/chains'
-import { useSignMessage } from 'wagmi'
-
-
+import { usePrepareContractWrite,useContractWrite,useWaitForTransaction,parseEther } from 'wagmi'
+import { utils } from 'ethers';
 const Title = styled.h2`
   font-size: ${(props) => props.theme.fontxxl};
   text-transform: capitalize;
@@ -78,36 +74,45 @@ const ButtonContainer = styled.div`
 
 `
 import ABI from './abi.json';
-const NFTAddress="0x008648809b9c863988bD9a6156eE85949F13A7A3";
+const NFTAddress="0x76c3c96e8add781d812c989bbc49b11558cf27d7";
 
 const TypeWriterText = () => {
   const [tokenId, setTokenId] = React.useState("1");
   // const recoveredAddress = React.useRef<string>();
   // const { data, error, isLoading, signMessage, variables } = useSignMessage()
- 
-  React.useEffect(() => {
-    
-  }, [])
- 
-  const { isOpen, open, close, setDefaultChain } = useWeb3Modal();
+  // useEffect(() => {
+  //     const contractAddress = NFTAddress; // 合约地址
+  //     const contractABI = ABI; // 合约ABI
+  
+  //     const contract = new ethers.Contract(contractAddress, contractABI, library.getSigner(account));
+  //     console.log(contract,"ccccc")
+  //     // 在这里可以使用contract对象进行合约写入操作
+  // }, []);
+  
   const { config } = usePrepareContractWrite({
     address: NFTAddress,
     abi: ABI,
     functionName: "mintPandas",
+    // chainId: optimism.id,
     args: [parseInt(1)],
-    value: '0',
+    value:utils.parseEther('0.005'),
+    onSuccess(data) {
+      console.log('Success', data)
+    },
+    onError(error) {
+      console.log('Error', error)
+    },
   });
-  console.log(config);
   const { data, write } = useContractWrite(config);
+  console.log(data,"CCCCCC")
+
   const { isLoading, isSuccess } = useWaitForTransaction({
     hash: data?.hash,
   });
 
-  useEffect(() => {
-    
-  }, [open, close, setDefaultChain]);
-
+ 
   const handleMint = () => {
+    console.log(config,"cccc")
     if (config && config.data) {
       write?.();
     }
@@ -137,11 +142,11 @@ const TypeWriterText = () => {
           }}
         />
       </Title>
-      <SubTitle>Bored Of Apes? Try Something New.</SubTitle>
+      <SubTitle>Mint is coming soon.</SubTitle>
       <ButtonContainer>
-        <button onClick={handleMint} disabled={!config || isLoading}>
+        {/* <button onClick={handleMint} disabled={!config || isLoading}>
           {isLoading ? "Minting..." : "Mint"}
-        </button>
+        </button> */}
       </ButtonContainer>
     </>
   );

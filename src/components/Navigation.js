@@ -2,7 +2,8 @@ import React, { useState } from "react";
 import styled from "styled-components";
 import Button from "./Button";
 import Logo from "./Logo";
-import { Web3Button } from '@web3modal/react'
+import { Web3Button,useWeb3ModalTheme } from '@web3modal/react';
+
 const Section = styled.section`
   width: 100vw;
   background-color: ${(props) => props.theme.body};
@@ -133,7 +134,15 @@ const HamburgerMenu = styled.span`
 
 const Navigation = () => {
   const [click, setClick] = useState(false);
-
+  const { theme, setTheme } = useWeb3ModalTheme();
+  setTheme({
+    themeMode: 'dark',
+    themeVariables: {
+      '--w3m-font-family': 'Roboto, sans-serif',
+      '--w3m-accent-color': '#123457'
+      // ...
+    }
+  })
   const scrollTo = (id) => {
     let element = document.getElementById(id);
 
@@ -158,7 +167,7 @@ const Navigation = () => {
           {/* <MenuItem onClick={() => scrollTo("about")}>About</MenuItem> */}
           <MenuItem onClick={() => scrollTo("roadmap")}>Roadmap</MenuItem>
           <MenuItem onClick={() => scrollTo("showcase")}>Showcase</MenuItem>
-          <MenuItem onClick={() => scrollTo("team")}>Team</MenuItem>
+          {/* <MenuItem onClick={() => scrollTo("team")}>Team</MenuItem> */}
           <MenuItem onClick={() => scrollTo("faq")}>Faq</MenuItem>
           <MenuItem>
             <div className="mobile">
